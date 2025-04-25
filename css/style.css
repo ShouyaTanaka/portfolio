@@ -103,7 +103,7 @@ html {
     transition: transform 0.3s;
   }
 
-  .card:hover {
+  .works-grid .card:hover {
     transform: translateY(-5px);
   }
 
