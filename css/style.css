@@ -1,0 +1,169 @@
+html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+
+  header {
+    background-color: #ffffff;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #1e88e5;
+  }
+
+  .svg-logo {
+    width: 80px;
+    height: 80px;
+    margin: 1rem auto;
+    animation: rotateLogo 4s linear infinite;
+  }
+
+  .svg-logo circle {
+    stroke-dasharray: 251;
+    stroke-dashoffset: 251;
+    animation: draw 2s ease-out forwards;
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes rotateLogo {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .parallax-section {
+    position: relative;
+    background-image: url('../images/back01.jpg'); /* 好きな画像に差し替えてOK */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+  }
+
+  /* 背景が見えるようにカードを半透明にする */
+    .parallax-section .card {
+    background-color: rgba(255, 255, 255, 0.7); /* 白っぽくて半透明 */
+    backdrop-filter: blur(4px); /* 背景をぼかして読みやすく */
+    color: #000; /* 文字は黒（背景が明るい画像なら） */
+  }
+
+
+  main {
+    padding: 2rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #1e88e5;
+    display: inline-block;
+    padding-bottom: 0.3rem;
+  }
+
+  .works-grid, .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    transition: transform 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .card h3 {
+    font-size: 1.2rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+    color: #666;
+  }
+  .detail-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  .modal-content {
+    background: #fff;
+    color: #333;
+    max-width: 700px;
+    width: 100%;
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 1.8rem;
+    color: #888;
+    cursor: pointer;
+  }
+  
+  .media-area img, .media-area video {
+    max-width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  

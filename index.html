@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ポートフォリオ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>田中翔也のポートフォリオ</h1>
+    <svg class="svg-logo" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" stroke="#1e88e5" stroke-width="5" fill="none" />
+      <circle cx="50" cy="50" r="30" stroke="#1e88e5" stroke-width="2" fill="none" />
+    </svg>
+  </header>
+
+  <main>
+    <section id="about" class="parallax-section">
+      <h2 class="section-title">自己紹介</h2>
+      <div class="card">
+        <p>※ここに自己紹介文を記載予定（名前、専門、得意ジャンル、制作スタイルなど）</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">使用技術</h2>
+      <div class="skills-grid">
+        <div class="card">
+          <img src="images/back05.jpg" alt="技術ロゴ">
+          <h3>C#</h3>
+          <p>※ここにC#の使用経験や得意分野などを記載予定</p>
+        </div>
+        <div class="card">
+          <img src="images/back05.jpg" alt="技術ロゴ">
+          <h3>Unity</h3>
+          <p>※ここにUnityでの開発経験や得意ジャンルなどを記載予定</p>
+        </div>
+        <div class="card">
+          <img src="images/back05.jpg" alt="技術ロゴ">
+          <h3>HTML/CSS</h3>
+          <p>※ここにHTML/CSSの制作経験やデザインに関する記述を予定</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">作品一覧</h2>
+      <div class="works-grid">
+        <div class="card" data-title="作品タイトル1" data-tech="Unity / C#" data-description="ここに作品の説明文が入ります。" data-media="images/back04.jpg">
+          <img src="images/back04.jpg" alt="作品画像">
+          <h3>作品タイトル1</h3>
+          <p>※ここに作品の概要や使用技術を記載予定</p>
+        </div>
+        <div class="card" data-title="作品タイトル2" data-tech="Unity / C#" data-description="ここに作品の説明文が入ります。" data-media="images/back03.jpg">
+          <img src="images/back03.jpg" alt="作品画像">
+          <h3>作品タイトル2</h3>
+          <p>※ここに作品の概要や使用技術を記載予定</p>
+        </div>
+        <div class="card" data-title="作品タイトル3" data-tech="Unity / C#" data-description="ここに作品の説明文が入ります。" data-media="images/back02.jpg">
+          <img src="images/back02.jpg" alt="作品画像">
+          <h3>作品タイトル3</h3>
+          <p>※ここに作品の概要や使用技術を記載予定</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ モーダルを body 内に移動 -->
+  <div class="detail-modal" id="detailModal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2 id="modalTitle">タイトル</h2>
+      <p id="modalTech">使用技術</p>
+      <div class="media-area">
+        <img id="modalMedia" src="" alt="作品画像">
+      </div>
+      <p id="modalDescription">ここに説明文が入ります。</p>
+    </div>
+  </div>
+
+  <!-- ✅ スクリプトを body の最後に移動 -->
+  <script>
+    const sections = document.querySelectorAll('section');
+    const onScroll = () => {
+      const triggerBottom = window.innerHeight * 0.9;
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        if (sectionTop < triggerBottom) {
+          section.classList.add('visible');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener('load', onScroll);
+
+    const detailModal = document.getElementById('detailModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTech = document.getElementById('modalTech');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalMedia = document.getElementById('modalMedia');
+    const closeButton = document.querySelector('.close-button');
+
+    document.querySelectorAll('.works-grid .card').forEach(card => {
+      card.addEventListener('click', () => {
+        modalTitle.textContent = card.dataset.title;
+        modalTech.textContent = card.dataset.tech;
+        modalDescription.textContent = card.dataset.description;
+        modalMedia.src = card.dataset.media;
+        detailModal.style.display = 'flex';
+      });
+    });
+
+    closeButton.addEventListener('click', () => {
+      detailModal.style.display = 'none';
+    });
+
+    detailModal.addEventListener('click', (e) => {
+      if (e.target === detailModal) {
+        detailModal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
