@@ -17,11 +17,26 @@
   </header>
 
   <main>
-    <section id="about" class="parallax-section">
-      <h2 class="section-title">自己紹介</h2>
-      <div class="card">
-        <p>※ここに自己紹介文を記載予定（名前、専門、得意ジャンル、制作スタイルなど）</p>
+    <section id="about" >
+        <h2 class="section-title">自己紹介</h2>
+      <div class="about-grid">
+        <div class="card">
+          <p><strong>名前：</strong>田中 翔也</p>
+          <p><strong>学校：</strong>横浜デジタルアーツ専門学校 ゲーム科</p>
+          <p><strong>卒業予定：</strong>2027年3月</p>
+          <p><strong>取得資格</strong></p>
+          <ul>
+            <li>情報技術検定 3級</li>
+            <li>CGクリエイター検定 ベーシック</li>
+          </ul>
+        </div>
       </div>
+        <div class="card">
+          <p>C#とUnityを用いたゲーム制作を中心に学んできました。</p>
+          <p>特に、ゲームの処理負荷を抑える軽量化に注力し、プレイヤーが快適に遊べる環境づくりを意識しています。</p>
+          <p>得意ジャンルはパズルゲームやアクションゲームで、思考力や反射神経を刺激するゲームデザインに魅力を感じています。</p>
+          <p>制作では「挑戦する姿勢」を大切にし、未経験の技術やジャンルにも積極的に挑戦しています。</p>
+        </div>
     </section>
 
     <section>
@@ -48,17 +63,37 @@
     <section>
       <h2 class="section-title">作品一覧</h2>
       <div class="works-grid">
-        <div class="card" data-title="作品タイトル1" data-tech="Unity / C#" data-description="ここに作品の説明文が入ります。" data-media="images/back04.jpg">
+        <div
+             class="card"
+             data-title="作品タイトル1"
+             data-tech="Unity / C#"
+             data-description="ここに作品の説明文が入ります。
+                           <br>ここに作品の説明文が入ります。
+                           <br>ここに作品の説明文が入ります。"
+             data-media="images/back04.jpg"
+        >
           <img src="images/back04.jpg" alt="作品画像">
           <h3>作品タイトル1</h3>
           <p>※ここに作品の概要や使用技術を記載予定</p>
         </div>
-        <div class="card" data-title="作品タイトル2" data-tech="Unity / C#" data-description="ここに作品の説明文が入ります。" data-media="images/back03.jpg">
+        <div
+             class="card"
+             data-title="作品タイトル2"
+             data-tech="Unity / C#"
+             data-description="ここに作品の説明文が入ります。"
+             data-media="images/back03.jpg"
+        >
           <img src="images/back03.jpg" alt="作品画像">
           <h3>作品タイトル2</h3>
           <p>※ここに作品の概要や使用技術を記載予定</p>
         </div>
-        <div class="card" data-title="作品タイトル3" data-tech="Unity / C#" data-description="ここに作品の説明文が入ります。" data-media="images/back02.jpg">
+        <div
+             class="card"
+             data-title="作品タイトル3"
+             data-tech="Unity / C#"
+             data-description="ここに作品の説明文が入ります。"
+             data-media="images/back02.jpg"
+        >
           <img src="images/back02.jpg" alt="作品画像">
           <h3>作品タイトル3</h3>
           <p>※ここに作品の概要や使用技術を記載予定</p>
@@ -104,8 +139,8 @@
     document.querySelectorAll('.works-grid .card').forEach(card => {
       card.addEventListener('click', () => {
         modalTitle.textContent = card.dataset.title;
-        modalTech.textContent = card.dataset.tech;
-        modalDescription.textContent = card.dataset.description;
+        modalTech.innerHTML = card.dataset.tech;
+        modalDescription.innerHTML = card.dataset.description;
         modalMedia.src = card.dataset.media;
         detailModal.style.display = 'flex';
       });
