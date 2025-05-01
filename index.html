@@ -31,6 +31,7 @@
           </ul>
         </div>
       </div>
+      <p></p>
         <div class="card">
           <p>C#とUnityを用いたゲーム制作を中心に学んできました。</p>
           <p>特に、ゲームの処理負荷を抑える軽量化に注力し、プレイヤーが快適に遊べる環境づくりを意識しています。</p>
@@ -76,41 +77,152 @@
     <section>
       <h2 class="section-title">作品一覧</h2>
       <div class="works-grid">
-        <div
-             class="card"
-             data-title="作品タイトル1"
-             data-tech="Unity / C#"
-             data-description="ここに作品の説明文が入ります。
-                           <br>ここに作品の説明文が入ります。
-                           <br>ここに作品の説明文が入ります。"
-             data-media="images/back04.jpg"
-        >
-          <img src="images/back04.jpg" alt="作品画像">
-          <h3>作品タイトル1</h3>
-          <p>※ここに作品の概要や使用技術を記載予定</p>
+
+        <div class="card" data-title="3DAction(仮)" data-tech="Unity / C# / 個人製作" data-media="images/work01.png">
+          <img src="images/work01.png" alt="作品画像">
+          <h3>3DAction(仮)</h3>
+          <p>3Dでの完全ランダムの地形生成に挑戦した作品</p>
+          <div class="description-content" style="display:none;">
+            <h4>3Dランダム地形生成に挑戦した作品</h4>
+            <p>このプロジェクトでは、<strong>3Dランダム地形生成</strong>に挑戦しました。
+              地形が自動的に生成されることで、プレイヤーは毎回異なるゲームプレイを楽しむことができます。
+              この技術は、特にオープンワールドやサバイバルゲームでよく使用されており、ゲームのリプレイ性を高めるための重要な要素の一つです。</p>
+
+            <h4>課題1: オブジェクト数の増加による処理負荷</h4>
+            <p>最初の課題は、プレイヤー周囲にランダムで生成される地形の数が増え、<strong>オブジェクト数が膨大</strong>になることです。
+              ゲームが進行するにつれて、生成される地形の数が増えていくため、そのままでは処理負荷が大きくなり、<strong>フレームレートが低下</strong>してしまいます。</p>
+            <p>そこで、私は「<strong>チャンク単位での生成と読み込み</strong>」というアプローチを取りました。
+              これにより、プレイヤー周囲の一定範囲にのみ地形を生成し、それ以外の場所は生成しないようにしています。
+              この方法により、必要のない領域を生成する無駄を省き、<strong>メモリ使用量</strong>を削減することができました。</p>
+<pre><code>
+void GenerateChunk(Vector2Int coord)
+{
+  GameObject chunk = new GameObject($"Chunk_{coord.x}_{coord.y}");
+  chunk.transform.parent = transform;
+
+  MeshFilter meshFilter = chunk.AddComponent&lt;MeshFilter&gt;();
+  MeshRenderer meshRenderer = chunk.AddComponent&lt;MeshRenderer&gt;();
+  meshRenderer.material = terrainMaterial;
+
+  Mesh mesh = GenerateTerrainMesh(coord);
+  meshFilter.mesh = mesh;
+
+  MeshCollider collider = chunk.AddComponent&lt;MeshCollider&gt;();
+  collider.sharedMesh = mesh;
+}
+
+Mesh GenerateTerrainMesh(Vector2Int coord)
+{
+  int size = 10;
+  float scale = 2f;
+  Mesh mesh = new Mesh();
+
+  Vector3[] vertices = new Vector3[(size + 1) * (size + 1)];
+  int[] triangles = new int[size * size * 6];
+
+  for (int z = 0, i = 0; z &lt;= size; z++) {
+    for (int x = 0; x &lt;= size; x++, i++) {
+      float y = Mathf.PerlinNoise((coord.x * size + x) * 0.1f, (coord.y * size + z) * 0.1f) * scale;
+      vertices[i] = new Vector3(x, y, z);
+    }
+  }
+
+  int vert = 0;
+  int tris = 0;
+  for (int z = 0; z &lt; size; z++) {
+    for (int x = 0; x &lt; size; x++) {
+      triangles[tris + 0] = vert + 0;
+      triangles[tris + 1] = vert + size + 1;
+      triangles[tris + 2] = vert + 1;
+      triangles[tris + 3] = vert + 1;
+      triangles[tris + 4] = vert + size + 1;
+      triangles[tris + 5] = vert + size + 2;
+      vert++;
+      tris += 6;
+    }
+    vert++;
+  }
+
+  mesh.vertices = vertices;
+  mesh.triangles = triangles;
+  mesh.RecalculateNormals();
+  return mesh;
+}
+</code></pre>
+            <h4>課題2: 当たり判定の負荷</h4>
+            <p>次の課題は、地形オブジェクトに対して<strong>当たり判定</strong>をどのように最適化するかという点です。
+              地形のチャンクはそれぞれ異なるメッシュを持ち、これらすべてにコライダーを設定すると、ゲームのパフォーマンスに影響を及ぼす可能性があります。</p>
+            <p>そのため、私は<strong>メッシュ結合</strong>を行い、複数のチャンクを一つの大きなメッシュとしてまとめる方法を採用しました。
+              この方法では、コライダーの数を大幅に減らし、処理負荷を軽減することができます。</p>
+<pre><code>
+private void CombineMeshesForCollider()
+{
+  MeshFilter[] filters = GetComponentsInChildren&lt;MeshFilter&gt;();
+  List&lt;CombineInstance&gt; combine = new List&lt;&gt;();
+
+  foreach (MeshFilter mf in filters)
+  {
+    CombineInstance ci = new CombineInstance();
+    ci.mesh = mf.sharedMesh;
+    ci.transform = mf.transform.localToWorldMatrix;
+    combine.Add(ci);
+  }
+
+  Mesh combinedMesh = new Mesh();
+  combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+  combinedMesh.CombineMeshes(combine.ToArray());
+
+  MeshCollider collider = GetComponent&lt;MeshCollider&gt;();
+  if (collider == null)
+  {
+    collider = gameObject.AddComponent&lt;MeshCollider&gt;();
+  }
+  collider.sharedMesh = combinedMesh;
+}
+</code></pre>
+
+            <h4>最終的な改善策: カメラ範囲外の非表示化</h4>
+            <p>最終的な最適化として、<strong>カメラ範囲外のチャンクを非表示にする</strong>方法を採用しました。
+              ゲームでは、カメラが映らない範囲に地形があっても描画する必要はありません。
+              このため、カメラの視野内にあるチャンクだけを描画し、それ以外のものは<strong>非表示</strong>にしました。</p>
+<pre><code>
+void UpdateChunks()
+{
+  Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+  foreach (Transform chunk in transform)
+  {
+    Renderer renderer = chunk.GetComponent<MeshRenderer>();
+    if (renderer != null)
+    {
+      bool isVisible = GeometryUtility.TestPlanesAABB(planes, renderer.bounds);
+      chunk.gameObject.SetActive(isVisible);
+    }
+  }
+}
+</code></pre>
+            <h4>結論</h4>
+            <p>このプロジェクトでは、3Dランダム地形生成を実現するために、さまざまな最適化手法を取り入れました。処理負荷を軽減し、パフォーマンスを向上させるための工夫を凝らしました。このような最適化手法を理解し、実際に活用することで、より快適なゲーム体験を提供することができました。</p>
+          </div>
         </div>
-        <div
-             class="card"
-             data-title="作品タイトル2"
-             data-tech="Unity / C#"
-             data-description="ここに作品の説明文が入ります。"
-             data-media="images/back03.jpg"
-        >
+
+        <div class="card" data-title="作品タイトル2" data-tech="Unity / C# / " data-media="images/back03.jpg">
           <img src="images/back03.jpg" alt="作品画像">
           <h3>作品タイトル2</h3>
           <p>※ここに作品の概要や使用技術を記載予定</p>
+          <div class="description-content" style="display:none;">
+            <p>ここに作品2の詳しい説明文が入ります。</p>
+          </div>
         </div>
-        <div
-             class="card"
-             data-title="作品タイトル3"
-             data-tech="Unity / C#"
-             data-description="ここに作品の説明文が入ります。"
-             data-media="images/back02.jpg"
-        >
+
+        <div class="card" data-title="作品タイトル3" data-tech="Unity / C# / " data-media="images/back02.jpg">
           <img src="images/back02.jpg" alt="作品画像">
           <h3>作品タイトル3</h3>
           <p>※ここに作品の概要や使用技術を記載予定</p>
+          <div class="description-content" style="display:none;">
+            <p>ここに作品3の詳しい説明文が入ります。</p>
+          </div>
         </div>
+
       </div>
     </section>
   </main>
@@ -150,14 +262,18 @@
     const closeButton = document.querySelector('.close-button');
 
     document.querySelectorAll('.works-grid .card').forEach(card => {
-      card.addEventListener('click', () => {
-        modalTitle.textContent = card.dataset.title;
-        modalTech.innerHTML = card.dataset.tech;
-        modalDescription.innerHTML = card.dataset.description;
-        modalMedia.src = card.dataset.media;
-        detailModal.style.display = 'flex';
-      });
+    card.addEventListener('click', () => {
+      modalTitle.textContent = card.dataset.title;
+      modalTech.innerHTML = card.dataset.tech;
+      modalMedia.src = card.dataset.media;
+
+      const desc = card.querySelector('.description-content').innerHTML;
+      modalDescription.innerHTML = desc;
+
+      detailModal.style.display = 'flex';
     });
+  });
+
 
     closeButton.addEventListener('click', () => {
       detailModal.style.display = 'none';
