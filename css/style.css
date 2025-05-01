@@ -72,9 +72,14 @@ html {
     padding-bottom: 0.3rem;
   }
 
-  .works-grid, .skills-grid {
+  .works-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1.5rem;
   }
 
